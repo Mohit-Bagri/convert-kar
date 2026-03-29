@@ -137,7 +137,7 @@ export default function CompressPage() {
                 </div>
                 <Slider
                   value={[quality]}
-                  onValueChange={(v) => setQuality(Array.isArray(v) ? v[0] : v)}
+                  onValueChange={(v) => setQuality(v[0])}
                   min={10}
                   max={100}
                   step={5}

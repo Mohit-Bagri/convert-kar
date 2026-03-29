@@ -139,6 +139,8 @@ export default function TrimPage() {
           onFileSelect={handleFileSelect}
           selectedFile={file}
           onClear={handleClear}
+          allowedCategories={["video", "audio"]}
+          description="Drop a video or audio file to trim"
         />
 
         {file && isMediaFile && status === "idle" && (
@@ -201,12 +203,6 @@ export default function TrimPage() {
               Trim {isVideo ? "Video" : "Audio"}
             </Button>
           </motion.div>
-        )}
-
-        {file && !isMediaFile && (
-          <div className="rounded-xl border bg-card p-6 text-center text-muted-foreground">
-            Trimming is only available for video and audio files.
-          </div>
         )}
 
         <ConversionProgress

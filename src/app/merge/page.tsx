@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Shield, Merge, Upload, X, GripVertical, FileIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getFileExtension, formatMap, formatFileSize } from "@/lib/formats/registry";
+import { getFileExtension, formatMap, formatFileSize, allFormats } from "@/lib/formats/registry";
 import { getFFmpeg } from "@/lib/ffmpeg/engine";
 import { fetchFile } from "@ffmpeg/util";
 
@@ -21,7 +21,12 @@ export default function MergePage() {
   const [error, setError] = useState<string | null>(null);
 
   const addFiles = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newFiles = Array.from(e.target.files || []);
+    const newFiles = Array.from(e.target.files || []).filter((f) => {
+      const ext = getFileExtension(f.name);
+      const mimeMatch = allFormats.find((fmt) => fmt.mimeType === f.type);
+      const format = formatMap[mimeMatch?.extension || ext];
+      return format && (format.category === "video" || format.category === "audio");
+    });
     setFiles((prev) => [...prev, ...newFiles]);
   }, []);
 
@@ -170,10 +175,17 @@ export default function MergePage() {
             <input
               type="file"
               multiple
+              accept="video/*,audio/*,.mp4,.mkv,.avi,.mov,.webm,.flv,.ogv,.m4v,.3gp,.mpeg,.wmv,.ts,.mp3,.wav,.aac,.ogg,.flac,.m4a,.wma,.aiff,.opus,.weba,.amr,.ac3"
               className="hidden"
               onChange={addFiles}
             />
           </label>
+
+          <div className="rounded-lg bg-muted/50 px-4 py-3 space-y-1">
+            <p className="text-xs font-medium text-muted-foreground">Supported formats (video & audio only):</p>
+            <p className="text-xs text-muted-foreground">Video: MP4, MKV, AVI, MOV, WebM, FLV, OGV, WMV, 3GP, MPEG, TS, M4V</p>
+            <p className="text-xs text-muted-foreground">Audio: MP3, WAV, AAC, OGG, FLAC, M4A, WMA, AIFF, OPUS, WEBA, AMR, AC3</p>
+          </div>
 
           <p className="text-xs text-muted-foreground">
             Files should be the same format for best results. They will be merged in the order shown above.
