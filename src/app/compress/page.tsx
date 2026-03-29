@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Shield, Minimize2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { formatFileSize, getFileExtension, formatMap } from "@/lib/formats/registry";
+import { BrandingBanner } from "@/components/branding-banner";
 import { compressImage } from "@/lib/ffmpeg/image-converter";
 import { convertFile, getFFmpeg } from "@/lib/ffmpeg/engine";
 
@@ -199,6 +200,8 @@ export default function CompressPage() {
           <Shield className="h-3.5 w-3.5 text-green-500" />
           Your files are processed locally and never uploaded to any server.
         </div>
+
+        <BrandingBanner />
       </div>
     </div>
   );

@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Shield, ArrowLeftRight, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 import { getFileExtension, formatMap } from "@/lib/formats/registry";
+import { BrandingBanner } from "@/components/branding-banner";
 import { convertFile, getFFmpeg } from "@/lib/ffmpeg/engine";
 import { convertImage } from "@/lib/ffmpeg/image-converter";
 
@@ -168,6 +169,8 @@ export default function ConvertPage() {
           <Shield className="h-3.5 w-3.5 text-green-500" />
           Your files are processed locally and never uploaded to any server.
         </div>
+
+        <BrandingBanner />
       </div>
     </div>
   );

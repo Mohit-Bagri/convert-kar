@@ -1,6 +1,7 @@
 "use client";
 
 import { Shield, Lock, Eye, Cookie, Server, Code, CheckCircle2 } from "lucide-react";
+import { BrandingBanner } from "@/components/branding-banner";
 import { motion } from "framer-motion";
 
 const fadeUp = {
@@ -144,6 +145,8 @@ export default function PrivacyPage() {
         <p className="text-sm text-muted-foreground text-center pt-4">
           Last updated: March 2025
         </p>
+
+        <BrandingBanner />
       </div>
     </div>
   );

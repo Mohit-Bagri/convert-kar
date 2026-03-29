@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { BrandingBanner } from "@/components/branding-banner";
 import {
   ArrowRight,
   ArrowLeftRight,
@@ -387,6 +388,9 @@ export default function Home() {
           </div>
         </motion.div>
       </section>
+
+      {/* Branding */}
+      <BrandingBanner />
     </div>
   );
 }

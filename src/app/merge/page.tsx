@@ -14,6 +14,7 @@ import {
   allFormats,
 } from "@/lib/formats/registry";
 import { mergeFiles, getFFmpeg } from "@/lib/ffmpeg/engine";
+import { BrandingBanner } from "@/components/branding-banner";
 
 type Status = "idle" | "loading" | "converting" | "completed" | "error";
 
@@ -259,6 +260,8 @@ export default function MergePage() {
           <Shield className="h-3.5 w-3.5 text-green-500" />
           Your files are processed locally and never uploaded to any server.
         </div>
+
+        <BrandingBanner />
       </div>
     </div>
   );
