@@ -19,13 +19,13 @@ const sections = [
     icon: Eye,
     title: "No Tracking",
     content:
-      "We do not use Google Analytics, Facebook Pixel, or any other tracking service. We don't track which files you convert, what formats you use, or how often you visit. Your usage is your business.",
+      "We do not use Google Analytics, Facebook Pixel or any other tracking service. We don't track which files you convert, what formats you use or how often you visit. Your usage is your business.",
   },
   {
     icon: Cookie,
     title: "No Cookies",
     content:
-      "Convertकर does not set any cookies. We don't use session cookies, tracking cookies, or any other form of browser storage to identify or profile you. The only local storage used is your theme preference (dark/light mode).",
+      "Convertकर does not set any cookies. We don't use session cookies, tracking cookies or any other form of browser storage to identify or profile you. The only local storage used is your theme preference (dark/light mode).",
   },
   {
     icon: Lock,

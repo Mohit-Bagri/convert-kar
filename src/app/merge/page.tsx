@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
+import Link from "next/link";
 import { ConversionProgress } from "@/components/converter/conversion-progress";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Merge, Upload, X, GripVertical, FileIcon } from "lucide-react";
+import { Shield, Merge, Upload, X, GripVertical, FileIcon, AlertCircle, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   getFileExtension,
@@ -81,6 +82,13 @@ export default function MergePage() {
     files.length > 0 ? getFileExtension(files[0].name) : "";
   const outputFormat = formatMap[outputExt];
   const isVideo = outputFormat?.category === "video";
+
+  // Check if all files have the same extension
+  const hasMixedFormats = useMemo(() => {
+    if (files.length < 2) return false;
+    const firstExt = getFileExtension(files[0].name);
+    return files.some((f) => getFileExtension(f.name) !== firstExt);
+  }, [files]);
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-16">
@@ -171,7 +179,32 @@ export default function MergePage() {
           </p>
         </div>
 
-        {files.length >= 2 && status === "idle" && (
+        {/* Format mismatch warning */}
+        {hasMixedFormats && files.length >= 2 && (
+          <motion.div
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col gap-3 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4"
+          >
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium text-sm">Different formats detected</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  All files must be the same format for merging to work. Please convert your files to a single format first.
+                </p>
+              </div>
+            </div>
+            <Link href="/convert">
+              <Button variant="outline" size="sm" className="gap-2 w-full sm:w-auto">
+                Go to Convert
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            </Link>
+          </motion.div>
+        )}
+
+        {files.length >= 2 && status === "idle" && !hasMixedFormats && (
           <Button
             size="lg"
             className="w-full gap-2 text-base h-12"

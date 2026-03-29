@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Convertकर - Free Online File Converter",
   description:
-    "Convert files for free in your browser. Video, audio, and image conversion with complete privacy. No uploads, no limits, no ads.",
+    "Convert files for free in your browser. Video, audio and image conversion with complete privacy. No uploads, no limits, no ads.",
   keywords: [
     "file converter",
     "video converter",

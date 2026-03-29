@@ -18,21 +18,12 @@ export async function getFFmpeg(): Promise<FFmpeg> {
   ffmpegInstance = new FFmpeg();
 
   loadPromise = (async () => {
-    const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm";
+    const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
 
-    const coreResponse = await fetch(`${baseURL}/ffmpeg-core.js`);
-    const coreBlob = new Blob([await coreResponse.text()], {
-      type: "text/javascript",
+    await ffmpegInstance!.load({
+      coreURL: `${baseURL}/ffmpeg-core.js`,
+      wasmURL: `${baseURL}/ffmpeg-core.wasm`,
     });
-    const coreURL = URL.createObjectURL(coreBlob);
-
-    const wasmResponse = await fetch(`${baseURL}/ffmpeg-core.wasm`);
-    const wasmBlob = new Blob([await wasmResponse.arrayBuffer()], {
-      type: "application/wasm",
-    });
-    const wasmURL = URL.createObjectURL(wasmBlob);
-
-    await ffmpegInstance!.load({ coreURL, wasmURL });
   })();
 
   await loadPromise;
@@ -68,7 +59,6 @@ export async function convertFile(
 
   const output = await ffmpeg.readFile(outputName);
 
-  // Cleanup
   try {
     await ffmpeg.deleteFile(inputName);
     await ffmpeg.deleteFile(outputName);
@@ -132,7 +122,6 @@ export async function mergeFiles(
 ): Promise<Blob> {
   const ffmpeg = await getFFmpeg();
 
-  // Write all input files
   const fileList: string[] = [];
   for (let i = 0; i < files.length; i++) {
     const ext = files[i].name.split(".").pop() || "mp3";
@@ -145,7 +134,6 @@ export async function mergeFiles(
     }
   }
 
-  // Write concat list
   const listContent = new TextEncoder().encode(fileList.join("\n"));
   await ffmpeg.writeFile("filelist.txt", listContent);
 
@@ -172,7 +160,6 @@ export async function mergeFiles(
 
   const output = await ffmpeg.readFile(outputName);
 
-  // Cleanup
   try {
     for (let i = 0; i < files.length; i++) {
       const ext = files[i].name.split(".").pop() || "mp3";
@@ -196,18 +183,8 @@ function buildFFmpegArgs(
   const args = ["-i", input];
 
   const audioOnly = [
-    "mp3",
-    "wav",
-    "aac",
-    "ogg",
-    "flac",
-    "m4a",
-    "wma",
-    "aiff",
-    "opus",
-    "weba",
-    "amr",
-    "ac3",
+    "mp3", "wav", "aac", "ogg", "flac", "m4a",
+    "wma", "aiff", "opus", "weba", "amr", "ac3",
   ];
 
   if (audioOnly.includes(outputFormat)) {
@@ -249,68 +226,25 @@ function buildFFmpegArgs(
   } else {
     switch (outputFormat) {
       case "mp4":
-        args.push(
-          "-codec:v",
-          "libx264",
-          "-preset",
-          "fast",
-          "-crf",
-          "23",
-          "-codec:a",
-          "aac"
-        );
+        args.push("-codec:v", "libx264", "-preset", "fast", "-crf", "23", "-codec:a", "aac");
         break;
       case "webm":
-        args.push(
-          "-codec:v",
-          "libvpx",
-          "-crf",
-          "30",
-          "-b:v",
-          "0",
-          "-codec:a",
-          "libvorbis"
-        );
+        args.push("-codec:v", "libvpx", "-crf", "30", "-b:v", "0", "-codec:a", "libvorbis");
         break;
       case "mkv":
-        args.push(
-          "-codec:v",
-          "libx264",
-          "-preset",
-          "fast",
-          "-crf",
-          "23",
-          "-codec:a",
-          "aac"
-        );
+        args.push("-codec:v", "libx264", "-preset", "fast", "-crf", "23", "-codec:a", "aac");
         break;
       case "avi":
         args.push("-codec:v", "mpeg4", "-q:v", "5", "-codec:a", "mp3");
         break;
       case "mov":
-        args.push(
-          "-codec:v",
-          "libx264",
-          "-preset",
-          "fast",
-          "-crf",
-          "23",
-          "-codec:a",
-          "aac"
-        );
+        args.push("-codec:v", "libx264", "-preset", "fast", "-crf", "23", "-codec:a", "aac");
         break;
       case "flv":
         args.push("-codec:v", "flv1", "-codec:a", "mp3");
         break;
       case "ogv":
-        args.push(
-          "-codec:v",
-          "libtheora",
-          "-q:v",
-          "7",
-          "-codec:a",
-          "libvorbis"
-        );
+        args.push("-codec:v", "libtheora", "-q:v", "7", "-codec:a", "libvorbis");
         break;
       default:
         break;
@@ -323,35 +257,15 @@ function buildFFmpegArgs(
 
 function getMimeType(format: string): string {
   const mimeTypes: Record<string, string> = {
-    mp4: "video/mp4",
-    mkv: "video/x-matroska",
-    avi: "video/x-msvideo",
-    mov: "video/quicktime",
-    webm: "video/webm",
-    flv: "video/x-flv",
-    ogv: "video/ogg",
-    gif: "image/gif",
-    mp3: "audio/mpeg",
-    wav: "audio/wav",
-    aac: "audio/aac",
-    ogg: "audio/ogg",
-    flac: "audio/flac",
-    m4a: "audio/mp4",
-    wma: "audio/x-ms-wma",
-    aiff: "audio/aiff",
-    opus: "audio/opus",
-    weba: "audio/webm",
-    amr: "audio/amr",
-    ac3: "audio/ac3",
-    png: "image/png",
-    jpg: "image/jpeg",
-    jpeg: "image/jpeg",
-    webp: "image/webp",
-    bmp: "image/bmp",
-    ico: "image/x-icon",
-    avif: "image/avif",
-    tiff: "image/tiff",
-    svg: "image/svg+xml",
+    mp4: "video/mp4", mkv: "video/x-matroska", avi: "video/x-msvideo",
+    mov: "video/quicktime", webm: "video/webm", flv: "video/x-flv",
+    ogv: "video/ogg", gif: "image/gif", mp3: "audio/mpeg", wav: "audio/wav",
+    aac: "audio/aac", ogg: "audio/ogg", flac: "audio/flac", m4a: "audio/mp4",
+    wma: "audio/x-ms-wma", aiff: "audio/aiff", opus: "audio/opus",
+    weba: "audio/webm", amr: "audio/amr", ac3: "audio/ac3",
+    png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
+    webp: "image/webp", bmp: "image/bmp", ico: "image/x-icon",
+    avif: "image/avif", tiff: "image/tiff", svg: "image/svg+xml",
   };
   return mimeTypes[format] || "application/octet-stream";
 }

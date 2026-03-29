@@ -106,7 +106,7 @@ export default function ConvertPage() {
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold">Convert Files</h1>
             <p className="text-muted-foreground text-sm">
-              Transform between 100+ video, audio, and image formats
+              Transform between 100+ video, audio and image formats
             </p>
           </div>
         </div>

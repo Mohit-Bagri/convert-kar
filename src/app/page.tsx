@@ -36,7 +36,7 @@ const tools = [
   {
     icon: ArrowLeftRight,
     title: "Convert",
-    description: "Transform between 100+ video, audio, and image formats",
+    description: "Transform between 100+ video, audio and image formats",
     href: "/convert",
     color: "text-blue-500",
     bg: "bg-blue-500/10",
@@ -90,7 +90,7 @@ const features = [
     icon: MonitorSmartphone,
     title: "Works Everywhere",
     description:
-      "Runs in any modern browser. Desktop, tablet, or phone — no software to install.",
+      "Runs in any modern browser. Desktop, tablet or phone — no software to install.",
   },
 ];
 
@@ -136,7 +136,7 @@ export default function Home() {
               variants={fadeUp}
               className="text-lg sm:text-xl text-muted-foreground max-w-2xl"
             >
-              Free, private, and unlimited. Transform videos, audio, and images
+              Free, private and unlimited. Transform videos, audio and images
               without uploading anything. Your files never leave your device.
             </motion.p>
 
@@ -264,7 +264,7 @@ export default function Home() {
             Supported Formats
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Convert between all major video, audio, and image formats.
+            Convert between all major video, audio and image formats.
           </p>
         </motion.div>
 
@@ -317,7 +317,7 @@ export default function Home() {
                 step: "01",
                 title: "Drop your file",
                 description:
-                  "Drag and drop or click to select any video, audio, or image file.",
+                  "Drag and drop or click to select any video, audio or image file.",
               },
               {
                 step: "02",
