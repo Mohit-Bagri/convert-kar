@@ -48,7 +48,7 @@ export function Footer() {
               <li><Link href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link></li>
               <li>
                 <a
-                  href="https://github.com"
+                  href="https://github.com/Mohit-Bagri/convert-kar"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-foreground transition-colors inline-flex items-center gap-1"
