@@ -1,7 +1,6 @@
 "use client";
 
 import { FFmpeg } from "@ffmpeg/ffmpeg";
-import { fetchFile, toBlobURL } from "@ffmpeg/util";
 
 let ffmpegInstance: FFmpeg | null = null;
 let loadPromise: Promise<void> | null = null;
@@ -20,17 +19,29 @@ export async function getFFmpeg(): Promise<FFmpeg> {
 
   loadPromise = (async () => {
     const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm";
-    await ffmpegInstance!.load({
-      coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, "text/javascript"),
-      wasmURL: await toBlobURL(
-        `${baseURL}/ffmpeg-core.wasm`,
-        "application/wasm"
-      ),
+
+    const coreResponse = await fetch(`${baseURL}/ffmpeg-core.js`);
+    const coreBlob = new Blob([await coreResponse.text()], {
+      type: "text/javascript",
     });
+    const coreURL = URL.createObjectURL(coreBlob);
+
+    const wasmResponse = await fetch(`${baseURL}/ffmpeg-core.wasm`);
+    const wasmBlob = new Blob([await wasmResponse.arrayBuffer()], {
+      type: "application/wasm",
+    });
+    const wasmURL = URL.createObjectURL(wasmBlob);
+
+    await ffmpegInstance!.load({ coreURL, wasmURL });
   })();
 
   await loadPromise;
   return ffmpegInstance!;
+}
+
+export async function fileToUint8Array(file: File): Promise<Uint8Array> {
+  const buffer = await file.arrayBuffer();
+  return new Uint8Array(buffer);
 }
 
 export async function convertFile(
@@ -45,23 +56,136 @@ export async function convertFile(
 
   if (onProgress) {
     ffmpeg.on("progress", ({ progress }) => {
-      onProgress(Math.round(progress * 100));
+      onProgress(Math.round(Math.min(progress * 100, 100)));
     });
   }
 
-  await ffmpeg.writeFile(inputName, await fetchFile(file));
+  const data = await fileToUint8Array(file);
+  await ffmpeg.writeFile(inputName, data);
 
   const args = buildFFmpegArgs(inputName, outputName, outputFormat);
   await ffmpeg.exec(args);
 
-  const data = await ffmpeg.readFile(outputName);
+  const output = await ffmpeg.readFile(outputName);
 
   // Cleanup
-  await ffmpeg.deleteFile(inputName);
-  await ffmpeg.deleteFile(outputName);
+  try {
+    await ffmpeg.deleteFile(inputName);
+    await ffmpeg.deleteFile(outputName);
+  } catch {
+    // ignore cleanup errors
+  }
 
   const mimeType = getMimeType(outputFormat);
-  return new Blob([data as BlobPart], { type: mimeType });
+  return new Blob([output as BlobPart], { type: mimeType });
+}
+
+export async function trimFile(
+  file: File,
+  startSeconds: number,
+  durationSeconds: number,
+  ext: string,
+  mimeType: string,
+  onProgress?: (progress: number) => void
+): Promise<Blob> {
+  const ffmpeg = await getFFmpeg();
+
+  const inputName = `input.${ext}`;
+  const outputName = `output.${ext}`;
+
+  if (onProgress) {
+    ffmpeg.on("progress", ({ progress }) => {
+      onProgress(Math.round(Math.min(progress * 100, 100)));
+    });
+  }
+
+  const data = await fileToUint8Array(file);
+  await ffmpeg.writeFile(inputName, data);
+
+  await ffmpeg.exec([
+    "-i",
+    inputName,
+    "-ss",
+    String(startSeconds),
+    "-t",
+    String(durationSeconds),
+    "-c",
+    "copy",
+    outputName,
+  ]);
+
+  const output = await ffmpeg.readFile(outputName);
+
+  try {
+    await ffmpeg.deleteFile(inputName);
+    await ffmpeg.deleteFile(outputName);
+  } catch {
+    // ignore cleanup errors
+  }
+
+  return new Blob([output as BlobPart], { type: mimeType });
+}
+
+export async function mergeFiles(
+  files: File[],
+  onProgress?: (progress: number) => void
+): Promise<Blob> {
+  const ffmpeg = await getFFmpeg();
+
+  // Write all input files
+  const fileList: string[] = [];
+  for (let i = 0; i < files.length; i++) {
+    const ext = files[i].name.split(".").pop() || "mp3";
+    const name = `input_${i}.${ext}`;
+    const data = await fileToUint8Array(files[i]);
+    await ffmpeg.writeFile(name, data);
+    fileList.push(`file '${name}'`);
+    if (onProgress) {
+      onProgress(Math.round(((i + 1) / files.length) * 30));
+    }
+  }
+
+  // Write concat list
+  const listContent = new TextEncoder().encode(fileList.join("\n"));
+  await ffmpeg.writeFile("filelist.txt", listContent);
+
+  const outputExt = files[0].name.split(".").pop() || "mp3";
+  const outputName = `merged.${outputExt}`;
+
+  if (onProgress) {
+    ffmpeg.on("progress", ({ progress }) => {
+      onProgress(30 + Math.round(Math.min(progress * 70, 70)));
+    });
+  }
+
+  await ffmpeg.exec([
+    "-f",
+    "concat",
+    "-safe",
+    "0",
+    "-i",
+    "filelist.txt",
+    "-c",
+    "copy",
+    outputName,
+  ]);
+
+  const output = await ffmpeg.readFile(outputName);
+
+  // Cleanup
+  try {
+    for (let i = 0; i < files.length; i++) {
+      const ext = files[i].name.split(".").pop() || "mp3";
+      await ffmpeg.deleteFile(`input_${i}.${ext}`);
+    }
+    await ffmpeg.deleteFile("filelist.txt");
+    await ffmpeg.deleteFile(outputName);
+  } catch {
+    // ignore cleanup errors
+  }
+
+  const mimeType = getMimeType(outputExt);
+  return new Blob([output as BlobPart], { type: mimeType });
 }
 
 function buildFFmpegArgs(
@@ -71,11 +195,23 @@ function buildFFmpegArgs(
 ): string[] {
   const args = ["-i", input];
 
-  // Audio extraction from video
-  const audioOnly = ["mp3", "wav", "aac", "ogg", "flac", "m4a", "wma", "aiff", "opus", "weba", "amr", "ac3"];
+  const audioOnly = [
+    "mp3",
+    "wav",
+    "aac",
+    "ogg",
+    "flac",
+    "m4a",
+    "wma",
+    "aiff",
+    "opus",
+    "weba",
+    "amr",
+    "ac3",
+  ];
 
   if (audioOnly.includes(outputFormat)) {
-    args.push("-vn"); // No video
+    args.push("-vn");
 
     switch (outputFormat) {
       case "mp3":
@@ -109,35 +245,72 @@ function buildFFmpegArgs(
         break;
     }
   } else if (outputFormat === "gif") {
-    args.push(
-      "-vf",
-      "fps=10,scale=480:-1:flags=lanczos",
-      "-t",
-      "10"
-    );
+    args.push("-vf", "fps=10,scale=480:-1:flags=lanczos", "-t", "10");
   } else {
-    // Video to video
     switch (outputFormat) {
       case "mp4":
-        args.push("-codec:v", "libx264", "-preset", "fast", "-crf", "23", "-codec:a", "aac");
+        args.push(
+          "-codec:v",
+          "libx264",
+          "-preset",
+          "fast",
+          "-crf",
+          "23",
+          "-codec:a",
+          "aac"
+        );
         break;
       case "webm":
-        args.push("-codec:v", "libvpx", "-crf", "30", "-b:v", "0", "-codec:a", "libvorbis");
+        args.push(
+          "-codec:v",
+          "libvpx",
+          "-crf",
+          "30",
+          "-b:v",
+          "0",
+          "-codec:a",
+          "libvorbis"
+        );
         break;
       case "mkv":
-        args.push("-codec:v", "libx264", "-preset", "fast", "-crf", "23", "-codec:a", "aac");
+        args.push(
+          "-codec:v",
+          "libx264",
+          "-preset",
+          "fast",
+          "-crf",
+          "23",
+          "-codec:a",
+          "aac"
+        );
         break;
       case "avi":
         args.push("-codec:v", "mpeg4", "-q:v", "5", "-codec:a", "mp3");
         break;
       case "mov":
-        args.push("-codec:v", "libx264", "-preset", "fast", "-crf", "23", "-codec:a", "aac");
+        args.push(
+          "-codec:v",
+          "libx264",
+          "-preset",
+          "fast",
+          "-crf",
+          "23",
+          "-codec:a",
+          "aac"
+        );
         break;
       case "flv":
         args.push("-codec:v", "flv1", "-codec:a", "mp3");
         break;
       case "ogv":
-        args.push("-codec:v", "libtheora", "-q:v", "7", "-codec:a", "libvorbis");
+        args.push(
+          "-codec:v",
+          "libtheora",
+          "-q:v",
+          "7",
+          "-codec:a",
+          "libvorbis"
+        );
         break;
       default:
         break;
