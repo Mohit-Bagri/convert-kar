@@ -216,7 +216,7 @@ No files uploaded. No data collected. No cookies.
 No tracking. No accounts. 100% open source.
 ```
 
-Read the full [Privacy Policy](/privacy) for technical details on how processing works.
+Read the full [Privacy Policy](https://convertkar.vercel.app/privacy) for technical details on how processing works.
 
 ---
 
