@@ -23,13 +23,14 @@ import {
 import { motion } from "framer-motion";
 
 const fadeUp = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.4 } },
 };
 
 const stagger = {
+  initial: {},
   animate: {
-    transition: { staggerChildren: 0.1 },
+    transition: { staggerChildren: 0.06 },
   },
 };
 
@@ -119,9 +120,10 @@ export default function Home() {
             className="flex flex-col items-center text-center gap-6"
           >
             <motion.div variants={fadeUp}>
-              <Badge variant="secondary" className="gap-1.5 px-3 py-1 text-sm">
-                <Sparkles className="h-3.5 w-3.5" />
-                100+ Format Conversions Supported
+              <Badge variant="secondary" className="gap-1.5 px-3 py-1 text-xs sm:text-sm text-center">
+                <Sparkles className="h-3.5 w-3.5 shrink-0" />
+                <span className="hidden sm:inline">100+ Format Conversions Supported</span>
+                <span className="sm:hidden">100+ Formats Supported</span>
               </Badge>
             </motion.div>
 

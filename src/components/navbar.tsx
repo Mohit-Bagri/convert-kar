@@ -67,7 +67,7 @@ export function Navbar() {
 
           {/* Mobile menu */}
           <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger className="md:hidden inline-flex items-center justify-center h-9 w-9 rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer">
+            <SheetTrigger aria-label="Open navigation menu" className="md:hidden inline-flex items-center justify-center h-9 w-9 rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer">
               <Menu className="h-4 w-4" />
             </SheetTrigger>
             <SheetContent side="right" className="w-[280px]">
