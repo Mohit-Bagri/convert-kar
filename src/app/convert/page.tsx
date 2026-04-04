@@ -95,11 +95,7 @@ export default function ConvertPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-16">
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="space-y-2 mb-8"
-      >
+      <div className="space-y-2 mb-8">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
             <ArrowLeftRight className="h-5 w-5" />
@@ -111,7 +107,7 @@ export default function ConvertPage() {
             </p>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       <div className="space-y-6">
         {/* Step 1: File Upload */}

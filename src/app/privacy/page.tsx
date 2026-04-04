@@ -54,11 +54,7 @@ const commitments = [
 export default function PrivacyPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-16">
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="space-y-2 mb-12 text-center"
-      >
+      <div className="space-y-2 mb-12 text-center">
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-green-500/10 text-green-500 mx-auto mb-4">
           <Shield className="h-8 w-8" />
         </div>
@@ -67,7 +63,7 @@ export default function PrivacyPage() {
           Your files never leave your device. This is not just a promise — it&apos;s
           how the software is built.
         </p>
-      </motion.div>
+      </div>
 
       <div className="space-y-8">
         {sections.map((section, i) => {
