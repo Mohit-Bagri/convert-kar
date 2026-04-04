@@ -72,9 +72,8 @@ export default function PrivacyPage() {
             <motion.div
               key={section.title}
               initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + i * 0.1 }}
               className="rounded-xl border bg-card p-6"
             >
               <div className="flex items-start gap-4">
@@ -95,8 +94,8 @@ export default function PrivacyPage() {
         {/* Commitments */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
           className="rounded-xl border bg-card p-6"
         >
           <h2 className="font-semibold text-lg mb-4">Our Commitments</h2>
@@ -113,8 +112,8 @@ export default function PrivacyPage() {
         {/* How it works technically */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
           className="rounded-xl border bg-card p-6"
         >
           <h2 className="font-semibold text-lg mb-4">How It Works Technically</h2>

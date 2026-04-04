@@ -166,12 +166,7 @@ export default function Home() {
 
       {/* Tools Grid */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-24">
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
+        <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">
             All the tools you need
           </h2>
@@ -179,7 +174,7 @@ export default function Home() {
             One place for all your file conversion needs. No switching between
             apps or websites.
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {tools.map((tool, i) => {
@@ -188,9 +183,8 @@ export default function Home() {
               <motion.div
                 key={tool.title}
                 initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 + i * 0.1 }}
               >
                 <Link href={tool.href}>
                   <div className="group rounded-xl border bg-card p-6 hover:shadow-lg hover:border-primary/30 transition-all duration-300 h-full">
@@ -214,12 +208,7 @@ export default function Home() {
       {/* Features */}
       <section className="bg-muted/30 border-y">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-24">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
+          <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
               Why Convert&#2325;&#2352;?
             </h2>
@@ -227,7 +216,7 @@ export default function Home() {
               Built for people who care about privacy and hate waiting for
               uploads.
             </p>
-          </motion.div>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, i) => {
@@ -236,9 +225,8 @@ export default function Home() {
                 <motion.div
                   key={feature.title}
                   initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 + i * 0.1 }}
                   className="text-center"
                 >
                   <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary mx-auto mb-4">
@@ -257,19 +245,14 @@ export default function Home() {
 
       {/* Supported Formats */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-24">
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
+        <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">
             Supported Formats
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Convert between all major video, audio and image formats.
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {formats.map((group, gi) => {
@@ -278,9 +261,8 @@ export default function Home() {
               <motion.div
                 key={group.category}
                 initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: gi * 0.1 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 + gi * 0.1 }}
                 className="rounded-xl border bg-card p-6"
               >
                 <div className="flex items-center gap-3 mb-4">
@@ -303,16 +285,11 @@ export default function Home() {
       {/* How It Works */}
       <section className="bg-muted/30 border-y">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-24">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
+          <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
               How it works
             </h2>
-          </motion.div>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             {[
@@ -338,9 +315,8 @@ export default function Home() {
               <motion.div
                 key={item.step}
                 initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 + i * 0.15 }}
                 className="text-center"
               >
                 <div className="text-5xl font-bold text-primary/20 mb-3">
@@ -360,8 +336,8 @@ export default function Home() {
       <section className="mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-24">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.6 }}
           className="rounded-2xl border bg-card p-8 sm:p-12 text-center"
         >
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-green-500/10 text-green-500 mx-auto mb-6">
